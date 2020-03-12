@@ -1,0 +1,94 @@
+FOR GOODS ID
+----------------------------------------------------------------------------------------------------
+DELIMITER // 
+CREATE TRIGGER add_goodsId BEFORE INSERT ON goods FOR EACH ROW
+BEGIN
+DECLARE next_id INT;
+SET next_id =(SELECT COUNT(*) FROM goods);
+SET NEW.goodsId=CONCAT('JEYAM_',next_id);
+END; //
+
+FOR STOCK ID
+----------------------------------------------------------------------------------------------------
+DELIMITER // 
+CREATE TRIGGER add_stockId BEFORE INSERT ON stock FOR EACH ROW
+BEGIN
+DECLARE next_id INT;
+SET next_id =(SELECT COUNT(*) FROM stock);
+SET NEW.stockId=CONCAT('JEYAM_STOCK_',next_id);
+END; //
+
+FOR SALES ID
+----------------------------------------------------------------------------------------------------
+DELIMITER // 
+CREATE TRIGGER add_salesId BEFORE INSERT ON sales FOR EACH ROW
+BEGIN
+DECLARE next_id INT;
+SET next_id =(SELECT COUNT(*) FROM sales);
+SET NEW.salesId=CONCAT('JEYAM_SALES_',next_id);
+END; //
+
+FOR UPDATE AVAILABLE STOCK in goods table on Stock Addition
+----------------------------------------------------------------------------------------------------
+DELIMITER //
+DROP PROCEDURE IF EXISTS updateAvailableStock;
+CREATE PROCEDURE updateAvailableStock (IN newStockValue INT,IN goodsIdValue VARCHAR(255))
+BEGIN DECLARE existingStockValue INT;
+SET  existingStockValue = (SELECT availableStock FROM goods WHERE goodsId = goodsIdValue);
+SET  existingStockValue = CAST(existingStockValue AS UNSIGNED)+ newStockValue;
+UPDATE goods SET availableStock = existingStockValue WHERE goodsId = goodsIdValue; 
+END; //
+
+FOR UPDATE AVAILABLE STOCK  and quantity sold in goods table on goods sale
+----------------------------------------------------------------------------------------------------
+DELIMITER //
+DROP PROCEDURE IF EXISTS updateAvailableStocknSales;
+CREATE PROCEDURE updateAvailableStocknSales (IN qtySoldValue INT,IN goodsIdValue VARCHAR(255)) 
+BEGIN
+DECLARE existingStockValue INT;
+DECLARE existingSoldValue INT;
+SET  existingSoldValue  =(SELECT qtySold FROM goods WHERE goodsId=goodsIdValue);
+SET  existingSoldValue= CAST(existingSoldValue AS UNSIGNED) + qtySoldValue;
+SET  existingStockValue = (SELECT availableStock FROM goods WHERE goodsId = goodsIdValue);
+SET  existingStockValue = CAST(existingStockValue AS UNSIGNED) - qtySoldValue;
+UPDATE goods SET availableStock = existingStockValue, qtySold=existingSoldValue WHERE goodsId = goodsIdValue;
+
+FOR LIST SALES DATA for the selected duration
+----------------------------------------------------------------------------------------------------
+DELIMITER//
+DROP PROCEDURE IF EXISTS listAllSales;
+CREATE PROCEDURE listAllSales (IN startDateTime VARCHAR(255),IN endDateTime VARCHAR(255))
+BEGIN 
+	select * from sales where salesDate between startDateTime and endDateTime;
+END;//
+
+FOR LIST GOODS DATA 
+----------------------------------------------------------------------------------------------------
+DELIMITER//
+DROP PROCEDURE IF EXISTS getAllGoods;
+CREATE PROCEDURE getAllGoods ()
+BEGIN
+	select * from goods;
+END;//
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

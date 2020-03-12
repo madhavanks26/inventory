@@ -1,0 +1,171 @@
+FOR GOODS ID
+----------------------------------------------------------------------------------------------------
+DELIMITER // 
+CREATE TRIGGER add_goodsId BEFORE INSERT ON goods FOR EACH ROW
+BEGIN
+DECLARE next_id INT;
+SET next_id =(SELECT COUNT(*) FROM goods);
+SET NEW.goodsId=CONCAT('JEYAM_',next_id);
+END; //
+
+FOR STOCK ID
+----------------------------------------------------------------------------------------------------
+DELIMITER // 
+CREATE TRIGGER add_stockId BEFORE INSERT ON stock FOR EACH ROW
+BEGIN
+DECLARE next_id INT;
+SET next_id =(SELECT COUNT(*) FROM stock);
+SET NEW.stockId=CONCAT('JEYAM_STOCK_',next_id);
+END; //
+
+FOR SALES ID
+----------------------------------------------------------------------------------------------------
+DELIMITER // 
+CREATE TRIGGER add_salesId BEFORE INSERT ON sales FOR EACH ROW
+BEGIN
+DECLARE next_id INT;
+SET next_id =(SELECT COUNT(*) FROM sales);
+SET NEW.salesId=CONCAT('JEYAM_SALES_',next_id);
+END; //
+
+FOR UPDATE AVAILABLE STOCK in goods table on Stock Addition
+----------------------------------------------------------------------------------------------------
+DELIMITER //
+DROP PROCEDURE IF EXISTS updateAvailableStock;
+CREATE PROCEDURE updateAvailableStock (IN newStockValue INT,IN goodsIdValue VARCHAR(255))
+BEGIN DECLARE existingStockValue INT;
+SET  existingStockValue = (SELECT availableStock FROM goods WHERE goodsId = goodsIdValue);
+SET  existingStockValue = CAST(existingStockValue AS UNSIGNED)+ newStockValue;
+UPDATE goods SET availableStock = existingStockValue WHERE goodsId = goodsIdValue; 
+END; //
+
+FOR REDUCE AVAILABLE STOCK in goods table on Stock Deletion/Removal
+----------------------------------------------------------------------------------------------------
+DELIMITER //
+DROP PROCEDURE IF EXISTS reduceAvailableStock;
+CREATE PROCEDURE reduceAvailableStock (IN stockIdValue VARCHAR(255))
+BEGIN 
+DECLARE existingStockValue INT;
+DECLARE stockCountValue INT;
+DECLARE goodsIdValue VARCHAR(255);
+SELECT goodsId,stockCount INTO goodsIdValue,stockCountValue FROM stock WHERE stockId = stockIdValue;
+SET  existingStockValue = (SELECT availableStock FROM goods WHERE goodsId = goodsIdValue);
+SET  existingStockValue = CAST(existingStockValue AS UNSIGNED)- CAST(stockCountValue AS UNSIGNED);
+UPDATE goods SET availableStock = existingStockValue WHERE goodsId = goodsIdValue; 
+END; //
+
+FOR UPDATE AVAILABLE STOCK  and quantity sold in goods table on goods sale
+----------------------------------------------------------------------------------------------------
+DELIMITER //
+DROP PROCEDURE IF EXISTS updateAvailableStocknSales;
+CREATE PROCEDURE updateAvailableStocknSales (IN qtySoldValue INT,IN goodsIdValue VARCHAR(255)) 
+BEGIN
+DECLARE existingStockValue INT;
+DECLARE existingSoldValue INT;
+SET  existingSoldValue  =(SELECT qtySold FROM goods WHERE goodsId=goodsIdValue);
+SET  existingSoldValue= CAST(existingSoldValue AS UNSIGNED) + qtySoldValue;
+SET  existingStockValue = (SELECT availableStock FROM goods WHERE goodsId = goodsIdValue);
+SET  existingStockValue = CAST(existingStockValue AS UNSIGNED) - qtySoldValue;
+UPDATE goods SET availableStock = existingStockValue, qtySold=existingSoldValue WHERE goodsId = goodsIdValue;
+END; //
+FOR UPDATE AVAILABLE STOCK  and quantity sold in goods table on goods return / update / delete
+----------------------------------------------------------------------------------------------------
+DELIMITER //
+DROP PROCEDURE IF EXISTS updateAvailableStockonSalesUpdate;
+CREATE PROCEDURE updateAvailableStockonSalesUpdate (IN qtySoldValue INT,IN goodsIdValue VARCHAR(255)) 
+BEGIN
+DECLARE existingStockValue INT;
+DECLARE existingSoldValue INT;
+SET  existingSoldValue  =(SELECT qtySold FROM goods WHERE goodsId=goodsIdValue);
+SET  existingSoldValue= CAST(existingSoldValue AS UNSIGNED) - qtySoldValue;
+SET  existingStockValue = (SELECT availableStock FROM goods WHERE goodsId = goodsIdValue);
+SET  existingStockValue = CAST(existingStockValue AS UNSIGNED) + qtySoldValue;
+UPDATE goods SET availableStock = existingStockValue, qtySold=existingSoldValue WHERE goodsId = goodsIdValue;
+END; //
+FOR LIST SALES DATA for the selected duration
+----------------------------------------------------------------------------------------------------
+DELIMITER //
+DROP PROCEDURE IF EXISTS listAllSales;
+CREATE PROCEDURE listAllSales (IN startDateTime VARCHAR(255),IN endDateTime VARCHAR(255))
+BEGIN 
+	select * from sales where (salesDate between startDateTime and endDateTime) and salesStatus='ACTIVE';
+END; //
+
+FOR LIST GOODS DATA 
+----------------------------------------------------------------------------------------------------
+DELIMITER //
+DROP PROCEDURE IF EXISTS getAllGoods;
+CREATE PROCEDURE getAllGoods ()
+BEGIN
+	select * from goods where goodsStatus='ACTIVE';
+END; //
+
+FOR LIST STOCK DATA for the selected duration
+----------------------------------------------------------------------------------------------------
+DELIMITER //
+DROP PROCEDURE IF EXISTS listAllStock;
+CREATE PROCEDURE listAllStock ()
+BEGIN 
+	select * from stock where stockStatus='ACTIVE';
+END; //
+FOR FETCHING goods purchase details
+----------------------------------------------------------------------------------------------------
+DELIMITER //
+DROP PROCEDURE IF EXISTS fetchGoodsPurchaseDetails;
+CREATE PROCEDURE fetchGoodsPurchaseDetails ()
+BEGIN 
+
+	select goodsActualPrice,goodsSellingPrice,stockCount from stock where purchaseDateTime =(select max(purchaseDateTime) from stock where goodsId='JEYAM_0') and goodsId='JEYAM_0';
+END; //
+FOR UPDATE STOCK UTLIZED in stock table on goods sale
+----------------------------------------------------------------------------------------------------
+	DELIMITER //
+	DROP PROCEDURE IF EXISTS updateStockUtilizedOnSale;
+	CREATE PROCEDURE updateStockUtilizedOnSale (IN qtySoldValue INT,IN goodsIdValue VARCHAR(255)) 
+	BEGIN 
+	DECLARE checkPoint INT;
+	DECLARE stockIdValue VARCHAR(255);
+	DECLARE stockCountValue INT;
+	DECLARE interCheckPoint INT;		
+	select stockId,stockCount INTO stockIdValue,stockCountValue from stock where goodsId=goodsIdValue and purchaseDateTime=(select min(purchaseDateTime) from stock where goodsId=goodsIdValue and stockStatus="ACTIVE" and stockUtilized="NO");				
+	SET checkPoint=stockCountValue-qtySoldValue;	
+	IF checkPoint=0 THEN
+		UPDATE stock SET stockUtilized = 'YES' WHERE stockId = stockIdValue;
+	END IF;
+	WHILE checkPoint<0 DO
+		UPDATE stock SET stockUtilized = 'YES' WHERE stockId = stockIdValue;					
+		select stockId,stockCount INTO stockIdValue,stockCountValue from stock where goodsId=goodsIdValue and purchaseDateTime=(select min(purchaseDateTime) from stock where goodsId=goodsIdValue and stockStatus="ACTIVE" and stockUtilized="NO");				
+		SET checkPoint=checkPoint*-1;
+		SET checkPoint=stockCountValue-checkPoint;	    
+	END WHILE;
+	END; //
+FOR UPDATE STOCK UTLIZED in stock table on goods udpate sale /delete sale
+----------------------------------------------------------------------------------------------------
+	DELIMITER //
+	DROP PROCEDURE IF EXISTS updateStockUtilizedOnUpdateSale;
+	CREATE PROCEDURE updateStockUtilizedOnUpdateSale (IN qtySoldValue INT,IN goodsIdValue VARCHAR(255)) 
+	BEGIN 
+	DECLARE checkPoint INT;
+	DECLARE stockIdValue VARCHAR(255);
+	DECLARE stockCountValue INT;
+	DECLARE interCheckPoint INT;		
+	SELECT stockId,stockCount INTO stockIdValue,stockCountValue FROM stock WHERE goodsId=goodsIdValue AND purchaseDateTime=(SELECT MAX(purchaseDateTime) FROM stock WHERE goodsId=goodsIdValue AND stockStatus="ACTIVE" AND stockUtilized="YES");				
+	SET checkPoint=stockCountValue-qtySoldValue;	
+	IF checkPoint=0 THEN
+		UPDATE stock SET stockUtilized = 'NO' WHERE stockId = stockIdValue;
+	END IF;
+	WHILE checkPoint<0 DO
+		UPDATE stock SET stockUtilized = 'NO' WHERE stockId = stockIdValue;					
+		SELECT stockId,stockCount INTO stockIdValue,stockCountValue FROM stock WHERE goodsId=goodsIdValue AND purchaseDateTime=(SELECT MAX(purchaseDateTime) FROM stock WHERE goodsId=goodsIdValue AND stockStatus="ACTIVE" AND stockUtilized="YES");				
+		SET checkPoint=checkPoint*-1;
+		SET checkPoint=stockCountValue-checkPoint;	    
+	END WHILE;
+	END; //
+
+
+update stock set stockUtilized='NO' ;
+call updateStockUtilizedOnSale(25,'JEYAM_0');
+select * from stock where goodsId='JEYAM_0' order by purchaseDateTime;
+call updateStockUtilizedOnUpdateSale(25,'JEYAM_0');
+select * from stock where goodsId='JEYAM_0' order by purchaseDateTime;
+

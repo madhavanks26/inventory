@@ -1,0 +1,322 @@
+The system includes below module
+1) Goods
+2) Stock
+3) Sales
+
+1) In Goods
+    a)/listGoods
+    b)/addGoods
+    c)/updateGood
+    d)/deleteGood
+
+2) In Stock
+    a)/listPurchase
+    b)/addStock
+    c)/updateStock
+    d)/deleteStock
+
+3) In Sales
+    a)/listAllSales
+    b)/addSales
+    c)/updateSale
+    d)/deleteSale
+
+1.a)/listGoods API
+    Api to retrive the ACTIVE goods
+      API URL:http://hostname:port/listGoods
+      API REQ: -
+      API RES:
+      [
+         [
+            {
+               "goodsId":"JEYAM_0",
+               "goodsName":"PP COVER NICE",
+               "goodsSize":"3 x 3",
+               "goodsDesc":"pp cover for peanut cake",
+               "goodsUnitOfMeasurement":"kg",
+               "availableStock":"28",
+               "qtySold":"2",
+               "goodsStatus":"ACTIVE"
+            },
+            {
+               "goodsId":"JEYAM_1",
+               "goodsName":"PP COVER NICE",
+               "goodsSize":"4 x 4",
+               "goodsDesc":"pp cover for peanut cake",
+               "goodsUnitOfMeasurement":"kg",
+               "availableStock":"28",
+               "qtySold":"2",
+               "goodsStatus":"ACTIVE"
+            }
+         ],
+         {
+            "fieldCount":0,
+            "affectedRows":0,
+            "insertId":0,
+            "serverStatus":34,
+            "warningCount":0,
+            "message":"",
+            "protocol41":true,
+            "changedRows":0
+         }
+      ]
+      Error handling : No Error handling
+
+   1.b)/addGoods API details
+      Api to retrive the add goods      
+         API URL:http://hostname:port/addGoods
+         API REQ: 
+         [
+            {
+            "goodsName":"PP COVER NICE",
+            "goodsSize":"3 x 3",
+            "goodsDesc":"pp cover for peanut cake",	
+            "goodsUnitOfMeasurement":"kg",
+            "availableStock":"0",
+            "qtySold":"0"
+            },
+            {
+            "goodsName":"PP COVER NICE",
+            "goodsSize":"4 x 4",
+            "goodsDesc":"pp cover for peanut cake",	
+            "goodsUnitOfMeasurement":"kg",
+            "availableStock":"0",
+            "qtySold":"0"
+            }
+         ];
+         API RES:"added goods"
+         Error handling: No Error handling
+
+   1.c)/updateGood API details
+      Api to retrive the update goods      
+         API URL:http://hostname:port/updateGood
+         API REQ: 
+         updateGoodById={};
+         updateGoodById.goodsId='JEYAM_0';
+         updateGoodById.goodsName='PP cover nice';
+         updateGoodById.goodsSize='12 x 12';
+         updateGoodById.goodsDesc='cake';
+         updateGoodById.goodsUnitOfMeasurement='Kg';
+         API RES:"Goods Updated Sucessfully"
+         Error handling:No Error handling
+
+
+   1.d)/deleteGood
+      Api to delete good
+         API URL:http://hostname:port/deleteGood
+         API REQ: 
+            deleteGoodId={};
+            deleteGoodId.goodsId='JEYAM_0';
+         API RES:
+            "Deleted Successfully"
+         Error handling:
+            No Error handling
+
+   2) In Stock   
+    2.a)/listPurchase
+      API to list all purchases made
+      API URL:http://hostname:port/listPurchase
+      API REQ:{"startDate":"1559559476","endDate":"1559559476"}
+      API RES:
+      [
+         [
+            {
+               "stockId":"JEYAM_STOCK_0",
+               "goodsId":"JEYAM_0",
+               "billNo":"1986",
+               "purchaseDateTime":"1559559474",
+               "goodsActualPrice":"140",
+               "goodsSellingPrice":"160",
+               "stockCount":"10",
+               "stockStatus":"ACTIVE",
+               "stockUtilized":"NO"
+            },
+            {
+               "stockId":"JEYAM_STOCK_1",
+               "goodsId":"JEYAM_1",
+               "billNo":"1985",
+               "purchaseDateTime":"1559559476",
+               "goodsActualPrice":"140",
+               "goodsSellingPrice":"160",
+               "stockCount":"10",
+               "stockStatus":"ACTIVE",
+               "stockUtilized":"NO"
+            }
+         ],
+         {
+            "fieldCount":0,
+            "affectedRows":0,
+            "insertId":0,
+            "serverStatus":34,
+            "warningCount":0,
+            "message":"",
+            "protocol41":true,
+            "changedRows":0
+         }
+      ]
+      Error Handling:
+         No Error Handling
+
+    2.b)/addStock
+      API to add new stock
+      API URL:"http://localhost:8081/addStock"
+      API REQ:
+         [
+            {
+               "goodsId":"JEYAM_0",
+               "billNo":"1986",
+               "purchaseDateTime":"1559559476",
+               "goodsActualPrice":"140",
+               "goodsSellingPrice":"160",
+               "goodsQuantity":"10",
+            },
+            {
+               "goodsId":"JEYAM_1",
+               "billNo":"1985",
+               "purchaseDateTime":"1559559476",
+               "goodsActualPrice":"140",
+               "goodsSellingPrice":"160",
+               "goodsQuantity":"10",
+            }
+         ]
+      API RES:
+         "added stock"
+      Error Handling:
+         No Error Handling
+    2.c)/updateStock
+      API to update the existing purchases made
+      API URL:"http://localhost:8081/updateStock"
+      API REQ:
+         [
+            {
+               "goodsId":"JEYAM_0",
+               "billNo":"1011",
+               "purchaseDateTime":"1579668342",
+               "goodsActualPrice":"240",
+               "goodsSellingPrice":"260",
+               "stockCount":"500",
+               "stockId":'JEYAM_STOCK_3'
+            }
+         ]
+      API RES:
+         "Stock details updated"
+      Error Handling:
+         No Error Handling
+    2.d)/deleteStock   
+      API to delete the purchase made
+      API URL:"http://localhost:8081/deleteStock"
+      API REQ:
+         deleteGoodId={};
+         deleteGoodId.goodsId='JEYAM_0';
+      API RES:
+         "deleted the purchased item from the stock table"
+      Error Handling:
+         No Error Handling
+3) In Sales
+    3.a)/listAllSales
+      API to list all sales made
+      API URL:http://localhost:8081/listAllSales
+      API REQ:{"startDate":"1561016283","endDate":"1561016283"}
+      API RES:
+         [
+            [
+               {
+                  "billno":"J1",
+                  "salesId":"JEYAM_SALES_0",
+                  "goodsId":"JEYAM_0",
+                  "buyerName":"ABC",
+                  "salesDate":"1561016283",
+                  "salesPrice":"180",
+                  "salesQuantity":"2",
+                  "salesAmount":"360",
+                  "profitAmount":"40",
+                  "salesTotalAmout":null,
+                  "salesStatus":"ACTIVE"
+               },
+               {
+                  "billno":"J1",
+                  "salesId":"JEYAM_SALES_1",
+                  "goodsId":"JEYAM_1",
+                  "buyerName":"ABC",
+                  "salesDate":"1561016283",
+                  "salesPrice":"180",
+                  "salesQuantity":"2",
+                  "salesAmount":"360",
+                  "profitAmount":"40",
+                  "salesTotalAmout":null,
+                  "salesStatus":"ACTIVE"
+               }
+            ],
+            {
+               "fieldCount":0,
+               "affectedRows":0,
+               "insertId":0,
+               "serverStatus":34,
+               "warningCount":0,
+               "message":"",
+               "protocol41":true,
+               "changedRows":0
+            }
+         ]
+
+      Error Handling:
+         No Error Handling
+    3.b)/addSales
+      API to add new sales
+      API URL:http://localhost:8081/addSales
+      API REQ:
+         [
+            {
+               "billNo":"J1",
+               "goodsId":"JEYAM_0",
+               "buyerName":"ABC",
+               "salesDate":"1561016283",
+               "salesPrice":"180",
+               "salesQuantity":"2",
+               "salesAmount":"360",
+               "profitAmount":"40"
+            },{
+               "billNo":"J1",
+               "goodsId":"JEYAM_1",
+               "buyerName":"ABC",
+               "salesDate":"1561016283",
+               "salesPrice":"180",
+               "salesQuantity":"2",
+               "salesAmount":"360",
+               "profitAmount":"40"
+            }
+         ]
+      API RES:
+      "added sales"
+      Error Handling:
+         No Error Handling
+    3.c)/updateSale
+      API to update the existing sale made
+      API URL:http://localhost:8081/updateSale
+      API REQ:
+      {
+               "billNo":"J1",
+               "goodsId":"JEYAM_0",
+               "buyerName":"ABC",
+               "salesDate":"1561016283",
+               "salesPrice":"180",
+               "salesQuantity":"2",
+               "salesAmount":"360",
+               "profitAmount":"40"
+            }
+
+      API RES:
+      "updated sales"
+      Error Handling:
+         No Error Handling
+    3.d)/deleteSale
+      API to delete the sale made
+      API URL:http://localhost:8081/deleteSale
+      API REQ:
+      {"goodsId":"","salesId":"","salesQuantity":""}
+      API RES:
+      "deleted sales"
+      Error Handling:
+         No Error Handling
+
+

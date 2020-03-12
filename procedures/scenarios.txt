@@ -1,0 +1,116 @@
+Date:29/01/2020
+Inventory Management System
+Basics
+1)Initialize the DB with goods details
+2)On purchase, insert in the stock table
+3)On purchase, add available stock to goods table based on goodsId
+4)On Sales, insert in the sales table
+5)On Sales, update available stock and qty sold for the sold good based on goodsId in goods table
+
+points to be noted 
+
+All the tables has the status column to decide to be active / in active data
+1)Stock table
+    a)stockStatus column 
+2)Sales table 
+    a)salesStatus column
+3)Goods table
+    a)goodsStatus column
+THUMB RULE:
+If INACTIVE then the data should not be accounted for any activity
+
+For both UPDATE on Sales and UPDATE on purchase the same as above with the update statement
+
+For Delete the goods make the goodsId as INACTIVE and will not be used for the further activity
+
+For Sales 
+
+A sale billno is associated with all the items ,salesId is for individual item can be made INACTIVE 
+when user deletes item
+
+The update for sales/stock as well happens at the same time
+
+ex:
+billNo:J001
+SalesId
+JEYAM_SALES_0  item name and qty etc...
+JEYAM_SALES_1  item name and qty etc...
+
+
+API list
+
+goods CRUD operation based API
+sales CRUD operation based API
+stock CRUD operation based API
+
+API on sales screen
+---------------------------------------------------------------------------------------------------------
+Date:30/01/2020
+Data Fetching
+a) PROFIT CALCULATION ACTIVITY (UI)
+
+        # load the dropdown by getting goods details (name size,availableStock) based on goodsId    
+        # once user selects the good from the drop down call for the stock table to get UN UTILIZED stock details
+        # validate if user enters more than availableStock value
+        # get the salesQty and iterate through the stock details array of objects
+         salesQty=20
+         profitAmount=0;
+         arr[]=[{"stockId","AP","timeStamp","stockCount"},
+                {"stockId","AP","timeStamp","stockCount"},
+                {"stockId","AP","timeStamp","stockCount"},
+                {"stockId","AP","timeStamp","stockCount"}]                  
+        getActualPrice(){
+            a=get the AP of min(timeStamp) of stockUtilized ='NO'
+        }
+        checkPoint= stockCount-salesQty;
+        a)checkPoint=10-10 if(checkPoint==0) SET AP=a; profitAmount+=(SP-AP)*salesQty; break;
+        b)checkPoint=10-20 if(checkPoint<0) SET AP=a; profitAmount+=(SP-AP)*(-1*checkPoint);getActualPrice();
+        else break;
+
+        # on submit perform stock utilized operation
+
+b) STOCK UTILIZED ACTIVITY on ADD SALE (API)
+
+        on add sale 
+
+        #fields goodsID,salesQuantity
+            y=salesQuantity
+        #get not utilized stock against the goodsId
+            arr[]=[{"stockId","timeStamp","stockCount","stockUtilized"},
+                {"stockId","timeStamp","stockCount","stockUtilized"},
+                {"stockId","timeStamp","stockCount","stockUtilized"},
+                {"stockId","timeStamp","stockCount","stockUtilized"}
+                ]
+        Sample
+        //x=get the stockCount of min(timeStamp) of stockUtilized ='NO'
+        Sample Query
+        leastPurchaseDateTime=(select min(purchaseDateTime) from stock where goodsId='JEYAM_0');
+        x=select stockCount from stock where stockUtilized="NO" and goodsId="JEYAM_0" and purchaseDateTime=leastPurchaseDateTime;        
+        y=2 //salesQuantity
+
+        getNotUtilizedStockCount(){
+            x=get the stockCount of min(timeStamp) of stockUtilized ='NO'
+        }
+        checkPoint=x-y;
+        a)checkPoint=10-10 if(checkPoint==0)set stockUtilized to 'YES';break
+        b)checkPoint=10-20 if(checkPoint<0)set stockUtilized to 'YES';recall getNotUtilizedStockCount() 
+        else break;
+
+c) STOCK UTILIZED ACTIVITY on UPDATE/DELETE SALE (API)
+
+        For the given goodsId
+        #get MAX(utilized stock) against the goodsId
+        x=stockCount;
+        #get the updated/deleted qty sold of the sale
+        y=soldQuantity;
+        checkPoint=x-y;
+        getUtilizedStockCount() {
+            x=#get MAX(utilized stock) against the goodsId
+        }
+        Sample
+        a)checkPoint=10-10 if(checkPoint==0)set stockUtilized to 'NO';break
+        b)checkPoint=10-20 if(checkPoint<0)set stockUtilized to 'NO';recall getUtilizedStockCount() 
+        else break;
+
+
+
