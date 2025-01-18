@@ -6,7 +6,6 @@ var con = mysql.createConnection({
   password: process.env.DB_PASS
 });
 con.connect(function (err) {
-  console.log(err);
   if (err) throw err;
   console.log("Connected!");
   var goodsTableSQL = "CREATE TABLE if not exists goods(goodsId VARCHAR(255),goodsName VARCHAR(255),goodsSize VARCHAR(255),goodsDesc VARCHAR(255),goodsUnitOfMeasurement VARCHAR(255),availableStock VARCHAR(255),qtySold VARCHAR(255),goodsStatus VARCHAR(255), PRIMARY KEY (goodsId))";

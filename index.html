@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Node delivered HTML</title>
+</head>
+<body>
+   <div>
+	   <h1>Send JSON to Node</h1>
+	   <div class="goods">
+		<button onClick="listGoods()">Show Goods</button>
+		<button onClick="addGoods()">Add Goods</button>
+		<button onClick="updateGood()">Update Good</button>
+		<button onClick="deleteGood()" disabled>Delete Good</button>
+	   </div>
+	   <br/>
+	   <div class="purchase">
+		<button onClick="listPurchase()">List Purchase</button>   
+		<button onClick="addMoreStock()">Add More Stock</button>
+		<button onClick="updateStock()">update Stock</button>
+		<button onClick="deleteStock()">delete Stock</button>
+	   </div>
+	   <br/>
+	   <div class="sales">
+		<button onClick="listSales()">List Sales</button>
+		<button onClick="addSales()">Add Sales</button>		
+		<button onClick="updateSales()">Update Sales</button>		
+		<button onClick="deleteSales()">Delete Sales</button>		
+	   </div>	
+		
+		
+		
+		
+        <p id ="result">
+        </p>
+   </div>
+<script>
+	var myData = [
+	{
+	    "name": "Bill",
+	    "age": 20
+	},
+	{
+	    "name": "Lisa",
+	    "age": 40
+	},
+	{
+	    "name": "Ant",
+	    "age": 80
+	}
+    ]
+    var addSalesData=[
+    {
+		"billNo":"J1",
+    	"goodsId":"JEYAM_0",
+    	"buyerName":"ABC",
+    	"salesDate":"1561016283",
+    	"salesPrice":"180",
+    	"salesQuantity":"2",
+    	"salesAmount":"360",
+    	"profitAmount":"40"
+    },{
+		"billNo":"J1",
+    	"goodsId":"JEYAM_1",
+    	"buyerName":"ABC",
+    	"salesDate":"1561016283",
+    	"salesPrice":"180",
+    	"salesQuantity":"2",
+    	"salesAmount":"360",
+    	"profitAmount":"40"
+    }
+    ]
+	var addMoreStockData=[
+		{
+			"goodsId":"JEYAM_0",
+			"billNo":"1986",
+			"purchaseDateTime":"1559559476",
+			"goodsActualPrice":"140",
+			"goodsSellingPrice":"160",
+			"goodsQuantity":"10",
+		},
+		{
+			"goodsId":"JEYAM_1",
+			"billNo":"1985",
+			"purchaseDateTime":"1559559476",
+			"goodsActualPrice":"140",
+			"goodsSellingPrice":"160",
+			"goodsQuantity":"10",
+		}
+	]
+	//update stock set goodsId='JEYAM_0',billNo='1011',purchaseDateTime='1579668342',goodsActualPrice='240',goodsSellingPrice='260',stockCount='50' where stockId='JEYAM_STOCK_3';
+	var updateStockData=[
+		{
+			"goodsId":"JEYAM_0",
+			"billNo":"1011",
+			"purchaseDateTime":"1579668342",
+			"goodsActualPrice":"240",
+			"goodsSellingPrice":"260",
+			"stockCount":"500",
+			"stockId":'JEYAM_STOCK_3'
+		}
+	]
+	var addGoodsData=[
+		{
+	"goodsName":"PP COVER NICE",
+	"goodsSize":"3 x 3",
+	"goodsDesc":"pp cover for peanut cake",	
+	"goodsUnitOfMeasurement":"kg",
+	"availableStock":"0",
+	"qtySold":"0"
+	},
+	{
+	"goodsName":"PP COVER NICE",
+	"goodsSize":"4 x 4",
+	"goodsDesc":"pp cover for peanut cake",	
+	"goodsUnitOfMeasurement":"kg",
+	"availableStock":"0",
+	"qtySold":"0"
+	}
+	];
+function addMoreStock(){
+	var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
+xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+       document.getElementById("result").innerHTML =
+       this.responseText;
+    }
+ };	
+ xmlhttp.open("POST", "http://localhost:8081/addStock");
+xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+xmlhttp.send(JSON.stringify(addMoreStockData));
+}
+function addSales(){
+	var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
+xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+       document.getElementById("result").innerHTML =
+       this.responseText;
+    }
+ };	
+ xmlhttp.open("POST", "http://localhost:8081/addSales");
+xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+xmlhttp.send(JSON.stringify(addSalesData));
+}	
+function addGoods(){
+
+var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
+xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+       document.getElementById("result").innerHTML =
+       this.responseText;
+    }
+ };
+xmlhttp.open("POST", "http://localhost:8081/addGoods");
+//xmlhttp.open("POST", "http://localhost:8081/addMember");
+xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+//xmlhttp.send(JSON.stringify(myData));
+xmlhttp.send(JSON.stringify(addGoodsData));
+
+}
+// updateGood
+function updateGood(){
+	console.log("update good");	
+	var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
+	var updateGoodById={};
+	updateGoodById.goodsId='JEYAM_0';
+	updateGoodById.goodsName='PP cover nice';
+	updateGoodById.goodsSize='12 x 12';
+	updateGoodById.goodsDesc='cake';
+	updateGoodById.goodsUnitOfMeasurement='Kg';
+xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+       document.getElementById("result").innerHTML =
+       this.responseText;
+	}
+	else{
+		document.getElementById("result").innerHTML =this.responseText;
+	}
+ };
+xmlhttp.open("POST", "http://localhost:8081/updateGood");
+xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+xmlhttp.send(JSON.stringify(updateGoodById));
+}
+function deleteGood(){
+	console.log("delete good");
+	var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
+	var deleteGoodId={};
+	deleteGoodId.goodsId='JEYAM_0';
+xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+       document.getElementById("result").innerHTML =
+       this.responseText;
+	}
+	else{
+		document.getElementById("result").innerHTML =this.responseText;
+	}
+ };
+xmlhttp.open("POST", "http://localhost:8081/deleteGood");
+xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+xmlhttp.send(JSON.stringify(deleteGoodId));
+}
+function listGoods(){
+	var xhr = new XMLHttpRequest();
+xhr.onreadystatechange = function() {
+    if (xhr.readyState == XMLHttpRequest.DONE) {
+    	console.log(JSON.stringify(xhr.responseText));
+		document.getElementById("result").innerHTML =xhr.responseText;
+    }
+}
+xhr.open('GET', 'http://localhost:8081/listGoods?authuser=0&environment_id=default', true);
+xhr.send(null);
+}
+function listPurchase(){
+	console.log("list Purchase");
+	var xhr = new XMLHttpRequest();
+xhr.onreadystatechange = function() {		
+    if (xhr.readyState == XMLHttpRequest.DONE) {
+    	console.log(JSON.stringify(xhr.responseText));
+		document.getElementById("result").innerHTML =xhr.responseText;
+    }
+}
+xhr.open('GET', 'http://localhost:8081/listPurchase?startDate=1559559476&endDate=1559559476', true);
+xhr.send(null);
+}
+function updateStock(){
+	var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
+xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+       document.getElementById("result").innerHTML =
+       this.responseText;
+    }
+ };	
+ xmlhttp.open("POST", "http://localhost:8081/updateStock");
+xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+xmlhttp.send(JSON.stringify(updateStockData));
+}
+function deleteStock(){
+	var deleteStockByIdJson={};
+	deleteStockByIdJson.stockId="JEYAM_STOCK_8"
+	var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
+xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+       document.getElementById("result").innerHTML =
+       this.responseText;
+    }
+ };	
+ xmlhttp.open("POST", "http://localhost:8081/deleteStock");
+xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+xmlhttp.send(JSON.stringify(deleteStockByIdJson));	
+}
+function listSales(){
+	console.log("list Sales");
+	var xhr = new XMLHttpRequest();
+xhr.onreadystatechange = function() {		
+    if (xhr.readyState == XMLHttpRequest.DONE) {
+    	console.log(JSON.stringify(xhr.responseText));
+		document.getElementById("result").innerHTML =xhr.responseText;
+    }
+}
+xhr.open('GET', 'http://localhost:8081/listAllSales?startDate=1561016283&endDate=1561016283', true);
+xhr.send(null);
+}
+
+</script>
+</body>
+</html>

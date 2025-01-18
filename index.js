@@ -1,15 +1,44 @@
+require('dotenv').config()
 var express = require('express');
 var bodyParser = require('body-parser');
 var async = require('async');
+var cors = require('cors');
 // Create application/x-www-form-urlencoded parser
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 const con = require('./database');
 var app = express();
-
+var corsOptions = {
+  origin: 'http://localhost:3000/',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
+  credentials: true,
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+app.use(cors(corsOptions));
+//console.log(__dirname);
 app.use(bodyParser.json());
 
+// Add headers
+app.use(function (req, res, next) {
+
+    // Website you wish to allow to connect
+    res.setHeader('Access-Control-Allow-Origin', 'null');
+
+    // Request methods you wish to allow
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+    // Request headers you wish to allow
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+
+    // Set to true if you need the website to include cookies in the requests sent
+    // to the API (e.g. in case you use sessions)
+    res.setHeader('Access-Control-Allow-Credentials', true);
+
+    // Pass to next layer of middleware
+    next();
+});
+// Add headers
 app.get('/', function (req, res) {
-  res.send('Hello World');
+  res.sendFile(__dirname+'/index.html');
 })
 /*----------------------------------------------Goods Module Begins-------------------------------------*/
 //Module list

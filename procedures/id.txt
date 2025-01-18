@@ -125,10 +125,10 @@ FOR UPDATE STOCK UTLIZED in stock table on goods sale
 	BEGIN 
 	DECLARE checkPoint INT;
 	DECLARE stockIdValue VARCHAR(255);
-	DECLARE stockCountValue INT;
+	DECLARE stockCountValue VARCHAR(255);
 	DECLARE interCheckPoint INT;		
 	select stockId,stockCount INTO stockIdValue,stockCountValue from stock where goodsId=goodsIdValue and purchaseDateTime=(select min(purchaseDateTime) from stock where goodsId=goodsIdValue and stockStatus="ACTIVE" and stockUtilized="NO");				
-	SET checkPoint=stockCountValue-qtySoldValue;	
+	SET checkPoint=CAST(stockCountValue AS UNSIGNED)-qtySoldValue;	
 	IF checkPoint=0 THEN
 		UPDATE stock SET stockUtilized = 'YES' WHERE stockId = stockIdValue;
 	END IF;
@@ -136,7 +136,7 @@ FOR UPDATE STOCK UTLIZED in stock table on goods sale
 		UPDATE stock SET stockUtilized = 'YES' WHERE stockId = stockIdValue;					
 		select stockId,stockCount INTO stockIdValue,stockCountValue from stock where goodsId=goodsIdValue and purchaseDateTime=(select min(purchaseDateTime) from stock where goodsId=goodsIdValue and stockStatus="ACTIVE" and stockUtilized="NO");				
 		SET checkPoint=checkPoint*-1;
-		SET checkPoint=stockCountValue-checkPoint;	    
+		SET checkPoint=CAST(stockCountValue AS UNSIGNED)-checkPoint;	    
 	END WHILE;
 	END; //
 FOR UPDATE STOCK UTLIZED in stock table on goods udpate sale /delete sale
@@ -147,10 +147,10 @@ FOR UPDATE STOCK UTLIZED in stock table on goods udpate sale /delete sale
 	BEGIN 
 	DECLARE checkPoint INT;
 	DECLARE stockIdValue VARCHAR(255);
-	DECLARE stockCountValue INT;
+	DECLARE stockCountValue VARCHAR(255);
 	DECLARE interCheckPoint INT;		
 	SELECT stockId,stockCount INTO stockIdValue,stockCountValue FROM stock WHERE goodsId=goodsIdValue AND purchaseDateTime=(SELECT MAX(purchaseDateTime) FROM stock WHERE goodsId=goodsIdValue AND stockStatus="ACTIVE" AND stockUtilized="YES");				
-	SET checkPoint=stockCountValue-qtySoldValue;	
+	SET checkPoint=CAST(stockCountValue AS UNSIGNED)-qtySoldValue;	
 	IF checkPoint=0 THEN
 		UPDATE stock SET stockUtilized = 'NO' WHERE stockId = stockIdValue;
 	END IF;
@@ -158,7 +158,7 @@ FOR UPDATE STOCK UTLIZED in stock table on goods udpate sale /delete sale
 		UPDATE stock SET stockUtilized = 'NO' WHERE stockId = stockIdValue;					
 		SELECT stockId,stockCount INTO stockIdValue,stockCountValue FROM stock WHERE goodsId=goodsIdValue AND purchaseDateTime=(SELECT MAX(purchaseDateTime) FROM stock WHERE goodsId=goodsIdValue AND stockStatus="ACTIVE" AND stockUtilized="YES");				
 		SET checkPoint=checkPoint*-1;
-		SET checkPoint=stockCountValue-checkPoint;	    
+		SET checkPoint=CAST(stockCountValue AS UNSIGNED)-checkPoint;	    
 	END WHILE;
 	END; //
 
