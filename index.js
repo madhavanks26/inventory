@@ -8,7 +8,7 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false })
 const con = require('./database');
 var app = express();
 var corsOptions = {
-  origin: 'http://localhost:3000/',
+  origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
   credentials: true,
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
@@ -36,6 +36,14 @@ app.use(function (req, res, next) {
     // Pass to next layer of middleware
     next();
 });
+// error-handling middleware 04MAR2025 chatgpt suggetion
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({
+      success: false,
+      error: "Something went wrong! Please try again."
+  });
+});
 // Add headers
 app.get('/', function (req, res) {
   res.sendFile(__dirname+'/index.html');
@@ -58,33 +66,88 @@ app.get('/listGoods', urlencodedParser, function (req, res) {
   })
 })
 //add goods
-app.post('/addGoods', urlencodedParser, function (req, res) {
+app.post('/addGoods', urlencodedParser, async (req, res) => {
   console.log("##################");
   console.log("call for addGoods");
   // addGoods api details below
   // goods table will be inserted with the data recieved
   // goods reference can be done by goodsId    
-  if (req.body) {
+  let dataFlag = Array.isArray(req.body);
+  if (req.body && dataFlag) {
     var jsondata = req.body;
-    var goodsData = [];
+    //var goodsData = [];
     var return_data = {};
-    var goodsTableInsertQuery = 'INSERT INTO goods (goodsName,goodsSize,goodsDesc,goodsUnitOfMeasurement,availableStock,qtySold,goodsStatus) VALUES ?';
-    for (var i = 0; i < jsondata.length; i++) {
-      goodsData.push([jsondata[i].goodsName, jsondata[i].goodsSize, jsondata[i].goodsDesc, jsondata[i].goodsUnitOfMeasurement, jsondata[i].availableStock, jsondata[i].qtySold,'ACTIVE'])
-    }
-    con.query(goodsTableInsertQuery, [goodsData], function (err, result) {
-      if (err) res.status(400).send(err);
-      res.status(200);
-      res.statusMessage = "added goods";
-      res.end("added goods")
+    // var goodsTableInsertQuery = 'INSERT INTO goods (goodsName,goodsSize,goodsDesc,goodsUnitOfMeasurement,availableStock,qtySold,goodsStatus) VALUES ?';
+    // for (var i = 0; i < jsondata.length; i++) {
+    //   goodsData.push([jsondata[i].goodsName, jsondata[i].goodsSize, jsondata[i].goodsDesc, jsondata[i].goodsUnitOfMeasurement, jsondata[i].availableStock, jsondata[i].qtySold,'ACTIVE'])
+    // }
+    async.forEachOf(jsondata,function(dataElement,keyValue,inner_callback){
+      console.log(dataElement);
+      var addGoodsProcedure = "CALL addGoods(?,?,?,?,?,?,?,@addGoodsResult)";
+      con.query(addGoodsProcedure, [dataElement['goodsName'], dataElement['goodsSize'], dataElement['goodsDesc'], dataElement['goodsUnitOfMeasurement'], dataElement['availableStock'], dataElement['qtySold'],'ACTIVE'], function (addGoodsQueryError, addGoodsQueryResult) {
+        
+        if(addGoodsQueryError){
+          console.log("######addGoodsQueryError######");
+          console.log(addGoodsQueryError);
+          return res.status(500).json({
+            success:false,
+            error :JSON.stringify(addGoodsQueryError)
+          });
+        }
+        else if(addGoodsQueryResult.affectedRows>0){
+          console.log("######addGoodsQueryResult######");
+          console.log(addGoodsQueryResult);
+          res.status(200).json({
+            success:true,
+            message: "Goods added Successfully!",
+            data: {}
+          });
+        }
+        else if(addGoodsQueryResult.affectedRows==0){
+          con.query('SELECT @addGoodsResult AS resultMessage',function(err,addGoodsOutValue){
+            console.log(addGoodsOutValue[0].resultMessage);
+            res.status(409).json({
+              success:false,
+              message: addGoodsOutValue[0].resultMessage,
+              data: {}
+            });
+          })
+        }
+        else{
+          return res.status(500).json({
+            success:false,
+            message: "No Records added!",
+            error :JSON.stringify(addGoodsQueryError)
+          });
+        }
+      })
+    }, function (err) {
+      if (err) {
+        //handle the error if the query throws an error
+        res.status(400).send(err);
+      } else {
+        //whatever you wanna do after all the iterations are done
+        res.status(200).end(JSON.stringify(return_data));
+      }
     });
+    
   }
   else {
-    res.status(400);
-    res.statusMessage = "data not available";
-    res.end(JSON.stringify({}));
+    
+    if(!dataFlag){
+      return res.status(400).json({ 
+          success: false, 
+          error: "Expected an array of objects" 
+      });
+    }
+    else{
+      return res.status(400).json({ 
+        success: false, 
+        error: "Data Not Available" 
+    });
+    }
   }
-})
+});
 //update goods
 app.post('/updateGood', urlencodedParser, function (req, res) {
   console.log("#################");

@@ -1,0 +1,21 @@
+ throw er; // Unhandled 'error' event
+      ^
+
+Error [ERR_STREAM_WRITE_AFTER_END]: write after end
+    at new NodeError (node:internal/errors:406:5)
+    at ServerResponse.end (node:_http_outgoing:1021:15)
+    at Query.<anonymous> (/Users/madhavan/Documents/work/projects/jeyam/inventory/index.js:79:11)
+    at Query.<anonymous> (/Users/madhavan/Documents/work/projects/jeyam/inventory/node_modules/mysql/lib/Connection.js:502:10)
+    at Query._callback (/Users/madhavan/Documents/work/projects/jeyam/inventory/node_modules/mysql/lib/Connection.js:468:16)
+    at Sequence.end (/Users/madhavan/Documents/work/projects/jeyam/inventory/node_modules/mysql/lib/protocol/sequences/Sequence.js:83:24)
+    at Query.ErrorPacket (/Users/madhavan/Documents/work/projects/jeyam/inventory/node_modules/mysql/lib/protocol/sequences/Query.js:90:8)
+    at Protocol._parsePacket (/Users/madhavan/Documents/work/projects/jeyam/inventory/node_modules/mysql/lib/protocol/Protocol.js:278:23)
+    at Parser.write (/Users/madhavan/Documents/work/projects/jeyam/inventory/node_modules/mysql/lib/protocol/Parser.js:76:12)
+    at Protocol.write (/Users/madhavan/Documents/work/projects/jeyam/inventory/node_modules/mysql/lib/protocol/Protocol.js:38:16)
+Emitted 'error' event on ServerResponse instance at:
+    at emitErrorNt (node:_http_outgoing:857:9)
+    at process.processTicksAndRejections (node:internal/process/task_queues:83:21) {
+  code: 'ERR_STREAM_WRITE_AFTER_END'
+}
+
+Node.js v20.9.0

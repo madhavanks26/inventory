@@ -35,8 +35,13 @@ export PATH=${PATH}:/usr/local/mysql/bin
 
 #26DEC2024
 ----------
+start the mysql server from settings -> MySQL
 connect to mysql:
 navigate to cd /usr/local/mysql/bin
 ./mysql -u root -p
 enter password from .env file
+
+#11JUL25
+---------
+Goods module added new procedure for handling add goods with handling duplicate insert
 
