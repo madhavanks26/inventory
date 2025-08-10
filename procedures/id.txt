@@ -4,8 +4,7 @@ DELIMITER //
 CREATE TRIGGER add_goodsId BEFORE INSERT ON goods FOR EACH ROW
 BEGIN
 DECLARE next_id INT;
-SET next_id =(SELECT COUNT(*) FROM goods);
-SET NEW.goodsId=CONCAT('JEYAM_',next_id);
+SET NEW.goodsId=CONCAT('JEYAM_',UUID());
 END; //
 
 FOR STOCK ID

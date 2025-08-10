@@ -8,7 +8,7 @@ var con = mysql.createConnection({
 con.connect(function (err) {
   if (err) throw err;
   console.log("Connected!");
-  var goodsTableSQL = "CREATE TABLE if not exists goods(goodsId VARCHAR(255),goodsName VARCHAR(255),goodsSize VARCHAR(255),goodsDesc VARCHAR(255),goodsUnitOfMeasurement VARCHAR(255),availableStock VARCHAR(255),qtySold VARCHAR(255),goodsStatus VARCHAR(255), PRIMARY KEY (goodsId))";
+  var goodsTableSQL = "CREATE TABLE if not exists goods(goodsId VARCHAR(255),goodsName VARCHAR(255),goodsBrand VARCHAR(255),goodsSize VARCHAR(255),goodsDesc VARCHAR(255),goodsUnitOfMeasurement VARCHAR(255),availableStock VARCHAR(255),qtySold VARCHAR(255),goodsStatus VARCHAR(255), PRIMARY KEY (goodsId))";
   con.query(goodsTableSQL, function (err, result) {
     if (err) throw err;
     console.log("goods Table created");
