@@ -1,7 +1,7 @@
 dataElement['goodsName'], dataElement['goodsSize'], dataElement['goodsDesc'], dataElement['goodsUnitOfMeasurement'], dataElement['availableStock'], dataElement['qtySold'],'ACTIVE'
 
 
-try json
+try json data
 // try{
     //   await con.query(goodsTableInsertQuery,[goodsData],(addGoodsQueryError,addGoodsQueryResult) => {
     //     if(addGoodsQueryError){
