@@ -1,3 +1,4 @@
+//mysql databse details to connect with mysql node package
 const mysql = require('mysql');
 var con = mysql.createConnection({
    host: process.env.DB_HOST,
@@ -5,7 +6,7 @@ var con = mysql.createConnection({
   database: process.env.DB_DATABASE,
   password: process.env.DB_PASS
 });
-//connection to create table
+//connection to create table 
 con.connect(function (err) {
   if (err) throw err;
   console.log("Connected!");
