@@ -5,6 +5,7 @@ var con = mysql.createConnection({
   database: process.env.DB_DATABASE,
   password: process.env.DB_PASS
 });
+//connection to create table
 con.connect(function (err) {
   if (err) throw err;
   console.log("Connected!");
