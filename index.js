@@ -1,11 +1,21 @@
-require("dotenv").config();
-var express = require("express");
-var bodyParser = require("body-parser");
-var async = require("async");
-var cors = require("cors");
+//require("dotenv").config();
+//var express = require("express");
+//var bodyParser = require("body-parser");
+//var async = require("async");
+//var cors = require("cors");
+//const con = require("./database");
+import express from "express";
+import bodyParser from "body-parser";
+import async from "async";
+import cors from "cors";
+import con from "./database.js";
+
+
+//util functions
+import { goodsDataValidation } from './utils/utils.js';
 // Create application/x-www-form-urlencoded parser
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
-const con = require("./database");
+
 var app = express();
 var corsOptions = {
   origin: "*",
@@ -90,6 +100,7 @@ app.post("/addGoods", urlencodedParser, async (req, res) => {
       jsondata,
       function (dataElement, keyValue, inner_callback) {
         //console.log(dataElement);
+        goodsDataValidation(dataElement);
         var addGoodsProcedure =
           "CALL addGoods(?,?,?,?,?,?,?,?,@addGoodsResult)";
         con.query(

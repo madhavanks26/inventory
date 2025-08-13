@@ -1,10 +1,13 @@
 //mysql databse details to connect with mysql node package
-const mysql = require('mysql');
+import { DB_HOST, DB_USER, DB_DATABASE, DB_PASS, PORT } from "./config/envConfig.js";
+import mysql from "mysql";
+//const mysql = require('mysql');
 var con = mysql.createConnection({
-   host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  database: process.env.DB_DATABASE,
-  password: process.env.DB_PASS
+   host: DB_HOST,
+  user: DB_USER,
+  database: DB_DATABASE,
+  password: DB_PASS
+  //password: process.env.DB_PASS
 });
 
 //connection to create table 
@@ -27,4 +30,4 @@ con.connect(function (err) {
     console.log("sales table created");
   });
 });  
-module.exports=con;
+export default con;
