@@ -98,10 +98,9 @@ app.post("/addGoods", urlencodedParser, async (req, res) => {
     // }
     async.forEachOf(
       jsondata,
-      function (dataElement, keyValue, inner_callback) {
-        //console.log(dataElement);
-        goodsDataValidation(dataElement);
-        var addGoodsProcedure =
+      function (dataElement, keyValue, inner_callback) {        
+        if (goodsDataValidation(dataElement)==true){
+          var addGoodsProcedure =
           "CALL addGoods(?,?,?,?,?,?,?,?,@addGoodsResult)";
         con.query(
           addGoodsProcedure,
@@ -157,6 +156,15 @@ app.post("/addGoods", urlencodedParser, async (req, res) => {
             }
           }
         );
+        }
+        else{
+          //goodsSize has space ex: 12 x 12 
+            res.status(400).json({
+              success: false,
+              error: "Goods Size is having space",
+            });
+        }
+        
       },
       function (err) {
         if (err) {

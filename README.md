@@ -45,3 +45,27 @@ enter password from .env file
 ---------
 Goods module added new procedure for handling add goods with handling duplicate insert
 
+#15JUL25
+--------
+addGoods Procedure created newly
+
+#10AUG25
+--------
+goodsBrand column introduced
+unique scenario consideration before:
+12x12 PP COVER
+issue : same size pp cover can be two or more other brands as well
+hence combination of goodsSize , goodsName , goodsBrand cosnidered as unique record for goods
+12x12 PP COVER THANGARATHAM
+12x12 PP COVER MARUTHI
+
+#13AUG25
+--------
+updated package.json to "type":"module",
+changed all syntax from require to import
+
+#15AUG25
+---------
+allowing space in goodsSize creating duplicate issue
+scenario: 12 x 12 and 12x12 are considered as two different goods
+Hence Space removed and validation is performed accordingly
