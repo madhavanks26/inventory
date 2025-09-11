@@ -116,6 +116,7 @@ app.post("/addGoods", urlencodedParser, async (req, res) => {
           ],
           function (addGoodsQueryError, addGoodsQueryResult) {
             //console.log(addGoodsQueryResult);
+            console.log(addGoodsQueryError);
             if (addGoodsQueryError) {
               console.log("######addGoodsQueryError######");
               console.log(addGoodsQueryError);
@@ -124,14 +125,14 @@ app.post("/addGoods", urlencodedParser, async (req, res) => {
                 error: JSON.stringify(addGoodsQueryError),
               });
             } else {
+              console.log("########addGoodsQueryPass########")
               con.query(
                 "SELECT @addGoodsResult AS addGoodsResultData",
                 (err, results) => {
                   if (results[0].addGoodsResultData == "RECORD EXISTS") {
                     res.status(409).json({
                       success: false,
-                      message: results[0].addGoodsResultData,
-                      data: {},
+                      error: results[0].addGoodsResultData                      
                     });
                   } else if (
                     results[0].addGoodsResultData == "RECORD INSERTED"
@@ -158,6 +159,7 @@ app.post("/addGoods", urlencodedParser, async (req, res) => {
         );
         }
         else{
+          con
           //goodsSize has space ex: 12 x 12 
             res.status(400).json({
               success: false,
@@ -169,7 +171,10 @@ app.post("/addGoods", urlencodedParser, async (req, res) => {
       function (err) {
         if (err) {
           //handle the error if the query throws an error
-          res.status(400).send(err);
+          res.status(400).json({
+            success:false,
+            error:"Error in Async"
+          });
         } else {
           //whatever you wanna do after all the iterations are done
           res.status(200).end(JSON.stringify(return_data));
